@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/ask",
+      "methods": ["POST"],
+      "dest": "api/ask.js"
+    }
+  ]
+}
