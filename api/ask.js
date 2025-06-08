@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing prompt or GEMINI_API_KEY" });
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
   const geminiRes = await fetch(url, {
     method: "POST",
