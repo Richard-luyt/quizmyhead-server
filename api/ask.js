@@ -10,23 +10,33 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing prompt or GEMINI_API_KEY" });
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-  const geminiRes = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }]
-    })
-  });
+    const geminiRes = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
 
-  const data = await geminiRes.json();
+    const data = await geminiRes.json();
 
-  if (!data.candidates || !data.candidates[0]) {
-    return res.status(500).json({ error: "No valid response from Gemini", raw: data });
+    const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!content) {
+      return res.status(500).json({
+        error: "No valid text returned from Gemini",
+        raw: data
+      });
+    }
+
+    return res.status(200).json({ result: content });
+
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error", detail: error.toString() });
   }
-
-  res.status(200).json({ result: data.candidates[0].content.parts[0].text });
 }
